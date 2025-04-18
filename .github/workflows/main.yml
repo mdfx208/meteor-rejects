@@ -21,13 +21,15 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+      env:
+        GRADLE_OPTS: "-Djava.net.preferIPv4Stack=true"
     - name: Remove *-dev.jar
       run: rm ./build/libs/*-dev.jar || true
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest-1.21.4"
-          prerelease: false
-          title: "1.21.4 Build"
-          files: |
-            ./build/libs/*.jar
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest-1.21.4"
+        prerelease: false
+        title: "1.21.4 Build"
+        files: |
+          ./build/libs/*.jar
