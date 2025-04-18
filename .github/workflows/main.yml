@@ -5,7 +5,10 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - '*.md'
 
 jobs:
   build:
@@ -21,15 +24,11 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-      env:
-        GRADLE_OPTS: "-Djava.net.preferIPv4Stack=true"
     - name: Remove *-dev.jar
       run: rm ./build/libs/*-dev.jar || true
-    - uses: "marvinpinto/action-automatic-releases@latest"
+    - name: Upload JAR to GitHub Releases
+      uses: softprops/action-gh-release@v1
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest-1.21.4"
-        prerelease: false
-        title: "1.21.4 Build"
-        files: |
-          ./build/libs/*.jar
+        files: ./build/libs/*.jar
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
